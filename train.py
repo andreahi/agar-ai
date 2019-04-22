@@ -1,4 +1,5 @@
 import json
+import os
 import shutil
 import time
 
@@ -136,7 +137,9 @@ with tf.Session() as sess:
 
     with graph.as_default():
         sess.run(init)
-    saver.restore(sess, "model_tmp/model.ckpt")
+
+    if os.path.isdir('model'):
+        saver.restore(sess, "model_tmp/model.ckpt")
 
     while True:
 
