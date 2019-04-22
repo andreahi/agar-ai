@@ -9,6 +9,8 @@ import redis
 import numpy as np
 from tensorflow.python.saved_model import tag_constants
 
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
+
 last_reload = datetime.datetime.now()
 
 run_without_model = not os.path.isdir('model');
