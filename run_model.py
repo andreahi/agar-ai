@@ -53,11 +53,7 @@ with tf.Session(graph=tf.Graph()) as sess:
                 tf.saved_model.loader.load(sess, [tag_constants.SERVING], "model")
                 last_reload = datetime.datetime.now()
                 print("reloaded model")
-            except ValueError:
-                print("Failed to reload model")
-            except OSError:
-                print("Failed to reload model")
-            except NotFoundError:
+            except:
                 print("Failed to reload model")
 
 
