@@ -7,6 +7,7 @@ import time
 import tensorflow as tf
 import redis
 import numpy as np
+from tensorboard.compat.tensorflow_stub.errors import NotFoundError
 from tensorflow.python.saved_model import tag_constants
 
 os.environ["CUDA_VISIBLE_DEVICES"] = ""
@@ -55,6 +56,8 @@ with tf.Session(graph=tf.Graph()) as sess:
             except ValueError:
                 print("Failed to reload model")
             except OSError:
+                print("Failed to reload model")
+            except NotFoundError:
                 print("Failed to reload model")
 
 
