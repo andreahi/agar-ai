@@ -115,7 +115,7 @@ with tf.Session() as sess:
     loss = tf.squared_difference(action_pred, actions_target)
     print("shape loss: ", str(loss.get_shape()))
     expected_diff = tf.stop_gradient(tf.squared_difference(reward_pred, next_pred_reward))
-    weighted_action_loss = tf.reduce_sum(tf.multiply(expected_diff, tf.multiply(actions_performed, loss)))
+    weighted_action_loss = 100 * tf.reduce_sum(tf.multiply(expected_diff, tf.multiply(actions_performed, loss)))
     #weighted_loss = loss
 
     reward_loss = tf.reduce_sum(tf.squared_difference(reward_pred, reward))
@@ -126,7 +126,7 @@ with tf.Session() as sess:
     grads, _ = tf.clip_by_global_norm(
         tf.gradients(cost, tvars), max_grad_norm)
 
-    optimizer = tf.train.AdamOptimizer(0.0001)
+    optimizer = tf.train.AdamOptimizer(0.00001)
 
     train_op = optimizer.apply_gradients(
         zip(grads, tvars))
@@ -149,7 +149,7 @@ with tf.Session() as sess:
             continue
 
         data = json.loads(new_data)
-        print(r.get('data'))
+        #print(r.get('data'))
 
         r.delete("data")
 
@@ -272,6 +272,6 @@ with tf.Session() as sess:
         action_pred_v = sess.run(
             [action_pred],
             feed_dict={food: x_train, individual_values: individual_values_train, keep_prob: 1.0})
-        print(action_pred_v)
+        #print(action_pred_v)
 
 
