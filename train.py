@@ -125,7 +125,7 @@ with tf.Session() as sess:
     grads, _ = tf.clip_by_global_norm(
         tf.gradients(cost, tvars), max_grad_norm)
 
-    optimizer = tf.train.AdamOptimizer(0.00001)
+    optimizer = tf.train.AdamOptimizer(0.0001)
 
     train_op = optimizer.apply_gradients(
         zip(grads, tvars))
