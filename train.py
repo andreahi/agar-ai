@@ -45,15 +45,14 @@ def forward_pass(x, single_value_inputs, keep_prob):
         for num_units in [100, 50, 20]:
             if num_units > 0:
                 nn = build_layer(nn, num_units, keep_prob, dropout=False)
-
-        #y_0 = tf.layers.dense(nn, 1, kernel_initializer=tf.random_uniform_initializer(-init_s, init_s), name="reward_pred")
         y_0 = tf.layers.dense(build_layer(nn, 5, keep_prob, dropout=False), 1, kernel_initializer=tf.random_uniform_initializer(-init_s, init_s))
+
+        nn = tf.concat([tf.layers.flatten(x), single_value_inputs], axis=1)
+        for num_units in [100, 50, 20]:
+            if num_units > 0:
+                nn = build_layer(nn, num_units, keep_prob, dropout=False)
+
         y_1 = tf.layers.dense(build_layer(nn, 5, keep_prob, dropout=False), 4, kernel_initializer=tf.random_uniform_initializer(-init_s, init_s))
-        y_pred = tf.concat([
-            y_0,
-            y_1],
-            axis=1,
-            name="output")
 
     return nn, addNameToTensor(y_0, "reward_pred"), addNameToTensor(y_1, "action_pred")
 
