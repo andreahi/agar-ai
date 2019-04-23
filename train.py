@@ -25,7 +25,7 @@ def build_layer(x, num_units, keep_prob, layer_n = False, dropout = False):
     nn = tf.contrib.layers.fully_connected(
         x,
         num_units,
-        activation_fn=tf.nn.leaky_relu,
+        activation_fn=tf.nn.relu,
         normalizer_fn=None if not layer_n else tf.contrib.layers.layer_norm,
         normalizer_params={},
         weights_initializer=tf.random_uniform_initializer(-init_s, init_s)
