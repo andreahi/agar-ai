@@ -46,7 +46,7 @@ def forward_pass(x, single_value_inputs, keep_prob):
             if num_units > 0:
                 nn1 = build_layer(nn1, num_units, keep_prob, dropout=False)
 
-        nn2 = tf.concat([tf.layers.flatten(x)], axis=1)
+        nn2 = tf.concat([individual_values], axis=1)
         for num_units in [20, 10, 5]:
             if num_units > 0:
                 nn2 = build_layer(nn2, num_units, keep_prob, dropout=False)
@@ -59,7 +59,7 @@ def forward_pass(x, single_value_inputs, keep_prob):
             if num_units > 0:
                 nn1 = build_layer(nn1, num_units, keep_prob, dropout=False)
 
-        nn2 = tf.concat([tf.layers.flatten(x)], axis=1)
+        nn2 = tf.concat([individual_values], axis=1)
         for num_units in [20, 10, 5]:
             if num_units > 0:
                 nn2 = build_layer(nn2, num_units, keep_prob, dropout=False)
