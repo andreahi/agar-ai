@@ -68,7 +68,7 @@ def forward_pass(x, single_value_inputs, keep_prob):
 
 
 
-    return nn, addNameToTensor(y_0, "reward_pred"), addNameToTensor(y_1, "action_pred")
+    return addNameToTensor(y_0, "reward_pred"), addNameToTensor(y_1, "action_pred")
 
 
 num_actions = 4
@@ -122,7 +122,7 @@ with tf.Session() as sess:
 
     keep_prob = tf.placeholder_with_default(1.0, shape=(), name="keep_prob")
 
-    nn, reward_pred, action_pred = forward_pass(food, individual_values, keep_prob)
+    reward_pred, action_pred = forward_pass(food, individual_values, keep_prob)
 
 
     loss = tf.squared_difference(action_pred, actions_target)
