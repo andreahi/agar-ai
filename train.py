@@ -42,13 +42,13 @@ def forward_pass(x, single_value_inputs, keep_prob):
 
     with tf.variable_scope("model_weighted", reuse=tf.AUTO_REUSE):
         nn = tf.concat([tf.layers.flatten(x), single_value_inputs], axis=1)
-        for num_units in [100, 50, 20]:
+        for num_units in [20, 10, 5]:
             if num_units > 0:
                 nn = build_layer(nn, num_units, keep_prob, dropout=False)
         y_0 = tf.layers.dense(build_layer(nn, 5, keep_prob, dropout=False), 1, kernel_initializer=tf.random_uniform_initializer(-init_s, init_s))
 
         nn = tf.concat([tf.layers.flatten(x), single_value_inputs], axis=1)
-        for num_units in [100, 50, 20]:
+        for num_units in [20, 10, 5]:
             if num_units > 0:
                 nn = build_layer(nn, num_units, keep_prob, dropout=False)
 
