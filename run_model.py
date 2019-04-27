@@ -34,16 +34,11 @@ with tf.Session(graph=tf.Graph()) as sess:
         data = json.loads(state)
         x = data["food"]
         individual_values = data["individual_values"]
-        print(individual_values)
+
         if not run_without_model:
             actions = sess.run(['action_pred:0'],
-                     feed_dict={'food:0': np.array([x], dtype=float), 'individual_values:0': np.array([individual_values], dtype=float)})
-            reward_pred = sess.run(['reward_pred:0'],
-                     feed_dict={'food:0': np.array([x], dtype=float), 'individual_values:0': np.array([individual_values], dtype=float)})
-            actions = actions
-            reward_pred = reward_pred
+                     feed_dict={'food:0': np.array([x], dtype=float), 'individual_values:0': np.array([individual_values], dtype=float)})[0][0]
             print(actions)
-            print(reward_pred)
             actions = actions.tolist()
             if random.randint(0, 100) > 80:
                 actions = [random.randint(0, 10), random.randint(0, 10), random.randint(0, 10), random.randint(0, 10)]
@@ -51,6 +46,7 @@ with tf.Session(graph=tf.Graph()) as sess:
             actions = [random.randint(0, 10), random.randint(0, 10), random.randint(0, 10), random.randint(0, 10)]
 
         r.set("action", json.dumps(actions))
+        print(individual_values)
 
 
         if (datetime.datetime.now() - last_reload).seconds > 200 and os.path.isdir('model'):
