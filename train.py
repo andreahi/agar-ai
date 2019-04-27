@@ -264,34 +264,35 @@ with tf.Session() as sess:
         shuffle_in_unison(next_x_train, next_individual_values_train, x_train, individual_values_train, reward_train, actions_train)
         print("dataset size: ", len(x_train))
         step = 10000
-        for i in range(0, 100000, step):
-            if i + step > len(x_train):
-                break
+        for _ in range(10):
+            for i in range(0, 100000, step):
+                if i + step > len(x_train):
+                    break
 
-            y_pred_v = sess.run(
-                [reward_pred],
-                feed_dict={food: x_train[i:i+step], individual_values:individual_values_train[i:i+step], keep_prob: 1.0})[0]
-
-
-            next_y_pred_v = sess.run(
-                [reward_pred],
-                feed_dict={food: next_x_train[i:i+step], individual_values:next_individual_values_train[i:i+step], keep_prob: 1.0})[0]
+                y_pred_v = sess.run(
+                    [reward_pred],
+                    feed_dict={food: x_train[i:i+step], individual_values:individual_values_train[i:i+step], keep_prob: 1.0})[0]
 
 
-            actions_target_train = np.zeros([len(reward_train[i:i+step]), num_actions])
-            positive_target = (next_y_pred_v - y_pred_v) > 0.
-            negative_target = (next_y_pred_v - y_pred_v) <= 0.
+                next_y_pred_v = sess.run(
+                    [reward_pred],
+                    feed_dict={food: next_x_train[i:i+step], individual_values:next_individual_values_train[i:i+step], keep_prob: 1.0})[0]
 
-            actions_target_train[np.squeeze(positive_target)] = 1
-            actions_target_train[np.squeeze(negative_target)] = 0
 
-            _, cost_train, reward_loss_v, weighted_action_loss_v = sess.run(
-                [train_op, cost, reward_loss, weighted_action_loss],
-                feed_dict={food: x_train[i:i+step], individual_values:individual_values_train[i:i+step], reward: reward_train[i:i+step], actions_performed: actions_train[i:i+step],
-                           actions_target: actions_target_train, next_pred_reward: next_y_pred_v,
-                           keep_prob: 0.99})
+                actions_target_train = np.zeros([len(reward_train[i:i+step]), num_actions])
+                positive_target = (next_y_pred_v - y_pred_v) > 0.
+                negative_target = (next_y_pred_v - y_pred_v) <= 0.
 
-            print("cost_train: " + str(cost_train) + " reward_loss_v: " + str(reward_loss_v) + " weighted_action_loss_v: " + str(weighted_action_loss_v))
+                actions_target_train[np.squeeze(positive_target)] = 1
+                actions_target_train[np.squeeze(negative_target)] = 0
+
+                _, cost_train, reward_loss_v, weighted_action_loss_v = sess.run(
+                    [train_op, cost, reward_loss, weighted_action_loss],
+                    feed_dict={food: x_train[i:i+step], individual_values:individual_values_train[i:i+step], reward: reward_train[i:i+step], actions_performed: actions_train[i:i+step],
+                               actions_target: actions_target_train, next_pred_reward: next_y_pred_v,
+                               keep_prob: 0.99})
+
+                print("cost_train: " + str(cost_train) + " reward_loss_v: " + str(reward_loss_v) + " weighted_action_loss_v: " + str(weighted_action_loss_v))
 
         shutil.rmtree('model', ignore_errors=True)
 
