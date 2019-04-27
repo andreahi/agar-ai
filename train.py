@@ -64,7 +64,7 @@ def forward_pass(x, single_value_inputs, keep_prob):
             if num_units > 0:
                 nn2 = build_layer(nn2, num_units, keep_prob, dropout=False)
 
-        y_1 = tf.layers.dense(build_layer(tf.concat([nn2], axis=1), 5, keep_prob, dropout=False), 1, kernel_initializer=tf.random_uniform_initializer(-init_s, init_s))
+        y_1 = tf.layers.dense(build_layer(tf.concat([nn2], axis=1), 5, keep_prob, dropout=False), 4, kernel_initializer=tf.random_uniform_initializer(-init_s, init_s))
 
 
 
