@@ -38,7 +38,7 @@ with tf.Session(graph=tf.Graph()) as sess:
         if not run_without_model:
             actions, reward_pred = sess.run(['action_pred:0', 'reward_pred:0'],
                      feed_dict={'food:0': np.array([x], dtype=float), 'individual_values:0': np.array([individual_values], dtype=float)})
-            actions = actions[0]
+            actions = actions
             reward_pred = reward_pred[0]
             print(actions)
             print(reward_pred)
