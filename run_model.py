@@ -28,6 +28,7 @@ while True:
             except:
                 print("Failed to reload model")
                 time.sleep(1)
+                continue
 
         graph = tf.get_default_graph()
 
