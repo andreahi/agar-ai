@@ -25,7 +25,6 @@ while True:
                 tf.saved_model.loader.load(sess, [tag_constants.SERVING], "model")
                 last_reload = datetime.datetime.now()
                 print("reloaded model")
-                break
             except:
                 print("Failed to reload model")
                 time.sleep(1)
