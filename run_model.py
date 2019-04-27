@@ -21,8 +21,13 @@ while True:
     with tf.Session(graph=tf.Graph()) as sess:
 
         if not run_without_model:
-            tf.saved_model.loader.load(sess, [tag_constants.SERVING], "model")
-            print("reloaded model")
+            try:
+                tf.saved_model.loader.load(sess, [tag_constants.SERVING], "model")
+                last_reload = datetime.datetime.now()
+                print("reloaded model")
+            except:
+                print("Failed to reload model")
+
 
         graph = tf.get_default_graph()
 
