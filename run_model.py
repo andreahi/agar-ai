@@ -25,7 +25,7 @@ with tf.Session(graph=tf.Graph()) as sess:
     print([op.values() for op in graph.get_operations()])
 
     while True:
-        r = redis.Redis(host='localhost', port=6379, db=0)
+        r = redis.Redis(host='in.space', port=6379, db=0)
         state = r.get('state')
         if not state:
             time.sleep(.001)
@@ -36,10 +36,10 @@ with tf.Session(graph=tf.Graph()) as sess:
         individual_values = data["individual_values"]
         print(individual_values)
         if not run_without_model:
-            actions, reward_pred = sess.run(['action_pred:0', 'reward_pred:0'],
+            actions = sess.run(['action_pred:0', 'reward_pred:0'],
                      feed_dict={'food:0': np.array([x], dtype=float), 'individual_values:0': np.array([individual_values], dtype=float)})[0][0]
             print(actions)
-            print(reward_pred)
+
             actions = actions.tolist()
             if random.randint(0, 100) > 80:
                 actions = [random.randint(0, 10), random.randint(0, 10), random.randint(0, 10), random.randint(0, 10)]
