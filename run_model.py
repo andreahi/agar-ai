@@ -33,7 +33,7 @@ while True:
 
         graph = tf.get_default_graph()
 
-        print([op.values() for op in graph.get_operations()])
+        #print([op.values() for op in graph.get_operations()])
 
         while True:
             r = redis.Redis(host='localhost', port=6379, db=0)
