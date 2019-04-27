@@ -36,10 +36,12 @@ with tf.Session(graph=tf.Graph()) as sess:
         individual_values = data["individual_values"]
         print(individual_values)
         if not run_without_model:
-            actions = sess.run(['action_pred:0', 'reward_pred:0'],
-                     feed_dict={'food:0': np.array([x], dtype=float), 'individual_values:0': np.array([individual_values], dtype=float)})[0][0]
+            actions, reward_pred = sess.run(['action_pred:0', 'reward_pred:0'],
+                     feed_dict={'food:0': np.array([x], dtype=float), 'individual_values:0': np.array([individual_values], dtype=float)})
+            actions = actions[0]
+            reward_pred = reward_pred[0]
             print(actions)
-
+            print(reward_pred)
             actions = actions.tolist()
             if random.randint(0, 100) > 80:
                 actions = [random.randint(0, 10), random.randint(0, 10), random.randint(0, 10), random.randint(0, 10)]
