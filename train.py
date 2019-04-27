@@ -158,7 +158,7 @@ with tf.Session() as sess:
 
         new_data = r.get('data')
         if not new_data:
-            time.sleep(10)
+            time.sleep(5)
             continue
 
         data = json.loads(new_data)
