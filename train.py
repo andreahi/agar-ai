@@ -262,9 +262,11 @@ with tf.Session() as sess:
             r.set("next_x_train", json.dumps(next_x_train.tolist()))
 
         shuffle_in_unison(next_x_train, next_individual_values_train, x_train, individual_values_train, reward_train, actions_train)
-
+        print("dataset size: ", len(x_train))
         step = 1000
         for i in range(0, 100000, step):
+            if i + step > len(x_train):
+                break
 
             y_pred_v = sess.run(
                 [reward_pred],
