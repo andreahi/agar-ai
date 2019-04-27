@@ -42,7 +42,7 @@ def forward_pass(x, single_value_inputs, keep_prob):
 
     with tf.variable_scope("model_weighted", reuse=tf.AUTO_REUSE):
         nn1 = tf.concat([tf.layers.flatten(x)], axis=1)
-        for num_units in [10, 5, 1]:
+        for num_units in [20, 10, 5]:
             if num_units > 0:
                 nn1 = build_layer(nn1, num_units, keep_prob, dropout=False)
 
@@ -55,7 +55,7 @@ def forward_pass(x, single_value_inputs, keep_prob):
 
 
         nn1 = tf.concat([tf.layers.flatten(x)], axis=1)
-        for num_units in [10, 5, 1]:
+        for num_units in [20, 10, 5]:
             if num_units > 0:
                 nn1 = build_layer(nn1, num_units, keep_prob, dropout=False)
 
@@ -156,20 +156,6 @@ with tf.Session() as sess:
 
     while True:
 
-        new_data = r.get('data')
-        if not new_data:
-            time.sleep(5)
-            continue
-
-        data = json.loads(new_data)
-        #print(r.get('data'))
-
-        r.delete("data")
-
-        if not data["screens"]:
-            print("Got empty dataset :s ")
-            continue
-
         x_train = []
         reward_train = []
         actions_train = []
@@ -193,60 +179,70 @@ with tf.Session() as sess:
         if stored_actions_train:
             actions_train = json.loads(stored_actions_train)
 
-
         stored_individual_values_train = r.get("individual_values")
         if stored_individual_values_train:
             individual_values_train = json.loads(stored_individual_values_train)
-
 
         stored_next_individual_values_train = r.get("next_individual_values_train")
         if stored_next_individual_values_train:
             next_individual_values_train = json.loads(stored_next_individual_values_train)
 
 
+        new_data = r.get('data')
+        if new_data:
+            data = json.loads(new_data)
+            #print(r.get('data'))
 
-        if next_x_train:
-            next_x_train = np.concatenate([next_x_train, np.array(data['screens'])[1:]])
-        else:
-            next_x_train = np.array(data['screens'])[1:]
+            r.delete("data")
 
-        if x_train:
-            x_train = np.concatenate([x_train, np.array(data['screens'][0:-1])])
-        else:
-            x_train = np.array(data['screens'])[0:-1]
-
-        if reward_train:
-            reward_train = np.concatenate(
-                [reward_train, np.expand_dims([data['scores'][-1] for _ in data['scores'][0:-1]], axis=1)])
-        else:
-            reward_train = np.expand_dims([data['scores'][-1] for _ in data['scores'][0:-1]], axis=1)
-
-        if actions_train:
-            actions_train = np.concatenate([actions_train, np.array((data['actions'])[0:-1])])
-        else:
-            actions_train = np.array((data['actions'])[0:-1])
-
-
-        if individual_values_train:
-            individual_values_train = np.concatenate([individual_values_train, np.array(data['individual_values'])[0:-1]])
-        else:
-            individual_values_train = np.array(data['individual_values'])[0:-1]
-
-
-        if next_individual_values_train:
-            next_individual_values_train = np.concatenate([next_individual_values_train, np.array(data['individual_values'])[1:]])
-        else:
-            next_individual_values_train = np.array(data['individual_values'])[1:]
+            if not data["screens"]:
+                print("Got empty dataset :s ")
+                continue
 
 
 
+            if next_x_train:
+                next_x_train = np.concatenate([next_x_train, np.array(data['screens'])[1:]])
+            else:
+                next_x_train = np.array(data['screens'])[1:]
 
-        r.set("x_train", json.dumps(x_train.tolist()))
-        r.set("reward_train", json.dumps(reward_train.tolist()))
-        r.set("actions_train", json.dumps(actions_train.tolist()))
-        r.set("individual_values", json.dumps(individual_values_train.tolist()))
-        r.set("next_individual_values_train", json.dumps(next_individual_values_train.tolist()))
-        r.set("next_x_train", json.dumps(next_x_train.tolist()))
+            if x_train:
+                x_train = np.concatenate([x_train, np.array(data['screens'][0:-1])])
+            else:
+                x_train = np.array(data['screens'])[0:-1]
+
+            if reward_train:
+                reward_train = np.concatenate(
+                    [reward_train, np.expand_dims([data['scores'][-1] for _ in data['scores'][0:-1]], axis=1)])
+            else:
+                reward_train = np.expand_dims([data['scores'][-1] for _ in data['scores'][0:-1]], axis=1)
+
+            if actions_train:
+                actions_train = np.concatenate([actions_train, np.array((data['actions'])[0:-1])])
+            else:
+                actions_train = np.array((data['actions'])[0:-1])
+
+
+            if individual_values_train:
+                individual_values_train = np.concatenate([individual_values_train, np.array(data['individual_values'])[0:-1]])
+            else:
+                individual_values_train = np.array(data['individual_values'])[0:-1]
+
+
+            if next_individual_values_train:
+                next_individual_values_train = np.concatenate([next_individual_values_train, np.array(data['individual_values'])[1:]])
+            else:
+                next_individual_values_train = np.array(data['individual_values'])[1:]
+
+
+
+
+            r.set("x_train", json.dumps(x_train.tolist()))
+            r.set("reward_train", json.dumps(reward_train.tolist()))
+            r.set("actions_train", json.dumps(actions_train.tolist()))
+            r.set("individual_values", json.dumps(individual_values_train.tolist()))
+            r.set("next_individual_values_train", json.dumps(next_individual_values_train.tolist()))
+            r.set("next_x_train", json.dumps(next_x_train.tolist()))
 
         for _ in range(200):
             y_pred_v = sess.run(
