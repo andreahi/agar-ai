@@ -279,7 +279,7 @@ with tf.Session() as sess:
         simple_save(sess,
                     "model",
                     inputs={"input": food},
-                    outputs={"action_pred": action_pred})
+                    outputs={"action_pred": action_pred, "reward_pred": reward_pred})
         save_path = saver.save(sess, "model_tmp/model.ckpt")
 
         action_pred_v = sess.run(
