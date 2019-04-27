@@ -25,7 +25,7 @@ def build_layer(x, num_units, keep_prob, layer_n = False, dropout = False):
     nn = tf.contrib.layers.fully_connected(
         x,
         num_units,
-        activation_fn=tf.nn.relu,
+        activation_fn=tf.nn.leaky_relu,
         normalizer_fn=None if not layer_n else tf.contrib.layers.layer_norm,
         normalizer_params={},
         weights_initializer=tf.random_uniform_initializer(-init_s, init_s)
@@ -42,7 +42,7 @@ def forward_pass(x, single_value_inputs, keep_prob):
 
     with tf.variable_scope("model_weighted", reuse=tf.AUTO_REUSE):
         nn1 = tf.concat([tf.layers.flatten(x)], axis=1)
-        for num_units in [10, 5, 2]:
+        for num_units in [10, 5, 1]:
             if num_units > 0:
                 nn1 = build_layer(nn1, num_units, keep_prob, dropout=False)
 
@@ -55,7 +55,7 @@ def forward_pass(x, single_value_inputs, keep_prob):
 
 
         nn1 = tf.concat([tf.layers.flatten(x)], axis=1)
-        for num_units in [10, 5, 2]:
+        for num_units in [10, 5, 1]:
             if num_units > 0:
                 nn1 = build_layer(nn1, num_units, keep_prob, dropout=False)
 
