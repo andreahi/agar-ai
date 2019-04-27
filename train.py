@@ -14,7 +14,24 @@ r = redis.Redis(host='localhost', port=6379, db=0)
 def addNameToTensor(someTensor, theName):
     return tf.identity(someTensor, name=theName)
 
+def shuffle_in_unison(a, b, c, d, e, f):
+    rng_state = np.random.get_state()
+    np.random.shuffle(a)
 
+    np.random.set_state(rng_state)
+    np.random.shuffle(b)
+
+    np.random.set_state(rng_state)
+    np.random.shuffle(c)
+
+    np.random.set_state(rng_state)
+    np.random.shuffle(d)
+
+    np.random.set_state(rng_state)
+    np.random.shuffle(e)
+
+    np.random.set_state(rng_state)
+    np.random.shuffle(f)
 
 def build_layer(x, num_units, keep_prob, layer_n = False, dropout = False):
     """Builds a layer with input x; dropout and layer norm if specified."""
@@ -244,18 +261,22 @@ with tf.Session() as sess:
             r.set("next_individual_values_train", json.dumps(next_individual_values_train.tolist()))
             r.set("next_x_train", json.dumps(next_x_train.tolist()))
 
-        for _ in range(200):
+        shuffle_in_unison(next_x_train, next_individual_values_train, x_train, individual_values_train, reward_train, actions_train)
+
+        step = 1000
+        for i in range(0, 100000, step):
+
             y_pred_v = sess.run(
                 [reward_pred],
-                feed_dict={food: x_train, individual_values:individual_values_train, keep_prob: 1.0})[0]
+                feed_dict={food: x_train[i:i+step], individual_values:individual_values_train[i:i+step], keep_prob: 1.0})[0]
 
 
             next_y_pred_v = sess.run(
                 [reward_pred],
-                feed_dict={food: next_x_train, individual_values:next_individual_values_train, keep_prob: 1.0})[0]
+                feed_dict={food: next_x_train[i:i+step], individual_values:next_individual_values_train[i:i+step], keep_prob: 1.0})[0]
 
 
-            actions_target_train = np.zeros([len(reward_train), num_actions])
+            actions_target_train = np.zeros([len(reward_train[i:i+step]), num_actions])
             positive_target = (next_y_pred_v - y_pred_v) > 0.
             negative_target = (next_y_pred_v - y_pred_v) <= 0.
 
@@ -264,8 +285,8 @@ with tf.Session() as sess:
 
             _, cost_train, reward_loss_v, weighted_action_loss_v = sess.run(
                 [train_op, cost, reward_loss, weighted_action_loss],
-                feed_dict={food: x_train, individual_values:individual_values_train, reward: reward_train, actions_performed: actions_train,
-                           actions_target: actions_target_train, next_pred_reward: next_y_pred_v,
+                feed_dict={food: x_train[i:i+step], individual_values:individual_values_train[i:i+step], reward: reward_train[i:i+step], actions_performed: actions_train[i:i+step],
+                           actions_target: actions_target_train[i:i+step], next_pred_reward: next_y_pred_v,
                            keep_prob: 0.99})
 
             print("cost_train: " + str(cost_train) + " reward_loss_v: " + str(reward_loss_v) + " weighted_action_loss_v: " + str(weighted_action_loss_v))
@@ -278,9 +299,9 @@ with tf.Session() as sess:
                     outputs={"action_pred": action_pred, "reward_pred": reward_pred})
         save_path = saver.save(sess, "model_tmp/model.ckpt")
 
-        action_pred_v = sess.run(
-            [action_pred],
-            feed_dict={food: x_train, individual_values: individual_values_train, keep_prob: 1.0})
+        #action_pred_v = sess.run(
+        #    [action_pred],
+        #    feed_dict={food: x_train, individual_values: individual_values_train, keep_prob: 1.0})
         #print(action_pred_v)
 
 
