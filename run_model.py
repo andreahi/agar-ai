@@ -25,7 +25,7 @@ with tf.Session(graph=tf.Graph()) as sess:
     print([op.values() for op in graph.get_operations()])
 
     while True:
-        r = redis.Redis(host='in.space', port=6379, db=0)
+        r = redis.Redis(host='localhost', port=6379, db=0)
         state = r.get('state')
         if not state:
             time.sleep(.001)
