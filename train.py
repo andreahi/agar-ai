@@ -150,17 +150,17 @@ with tf.Session() as sess:
 
     reward_loss = tf.reduce_sum(tf.abs(reward_pred - reward))
 
-    cost = (weighted_action_loss / batch_size) + (reward_loss / batch_size)
+    cost = (weighted_action_loss / batch_size)
 
-    tvars = tf.trainable_variables()
-    grads, _ = tf.clip_by_global_norm(
-        tf.gradients(cost, tvars), max_grad_norm)
+    cost_reward = (reward_loss / batch_size)
+
 
     optimizer = tf.train.AdamOptimizer(0.0001)
+    optimizer_reward = tf.train.AdamOptimizer(0.0001)
 
-    train_op = optimizer.apply_gradients(
-        zip(grads, tvars))
+    train_op = optimizer.minimize(loss)
 
+    train_op_reward = optimizer_reward.minimize(reward_loss)
     init = tf.global_variables_initializer()
 
     saver = tf.train.Saver()
@@ -286,8 +286,14 @@ with tf.Session() as sess:
                 actions_target_train[np.squeeze(positive_target)] = 1
                 actions_target_train[np.squeeze(negative_target)] = 0
 
-                _, cost_train, reward_loss_v, weighted_action_loss_v = sess.run(
-                    [train_op, cost, reward_loss, weighted_action_loss],
+                _, reward_loss_v = sess.run(
+                    [train_op_reward, reward_loss],
+                    feed_dict={food: x_train[i:i+step], individual_values:individual_values_train[i:i+step], reward: reward_train[i:i+step], actions_performed: actions_train[i:i+step],
+                               actions_target: actions_target_train, next_pred_reward: next_y_pred_v,
+                               keep_prob: 0.99})
+
+                _, cost_train, weighted_action_loss_v = sess.run(
+                    [train_op, cost, weighted_action_loss],
                     feed_dict={food: x_train[i:i+step], individual_values:individual_values_train[i:i+step], reward: reward_train[i:i+step], actions_performed: actions_train[i:i+step],
                                actions_target: actions_target_train, next_pred_reward: next_y_pred_v,
                                keep_prob: 0.99})
