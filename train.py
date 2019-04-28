@@ -142,13 +142,13 @@ with tf.Session() as sess:
     reward_pred, action_pred = forward_pass(food, individual_values, keep_prob)
 
 
-    loss = tf.squared_difference(action_pred, actions_target)
+    loss = tf.abs(action_pred - actions_target)
     print("shape loss: ", str(loss.get_shape()))
     expected_diff = tf.stop_gradient(tf.abs(reward_pred - next_pred_reward))
     weighted_action_loss = tf.reduce_sum(tf.multiply(expected_diff, tf.multiply(actions_performed, loss)))
     #weighted_loss = loss
 
-    reward_loss = tf.reduce_sum(tf.squared_difference(reward_pred, reward))
+    reward_loss = tf.reduce_sum(tf.abs(reward_pred - reward))
 
     cost = (weighted_action_loss / batch_size) + (reward_loss / batch_size)
 
