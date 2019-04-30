@@ -190,27 +190,27 @@ with tf.Session() as sess:
 
         stored_next_x_train = r.get("next_x_train")
         if stored_next_x_train:
-            next_x_train = json.loads(stored_next_x_train)
+            next_x_train = np.array(json.loads(stored_next_x_train))
 
         stored_x_train = r.get("x_train")
         if stored_x_train:
-            x_train = json.loads(stored_x_train)
+            x_train = np.array(json.loads(stored_x_train))
 
         stored_reward_train = r.get("reward_train")
         if stored_reward_train:
-            reward_train = json.loads(stored_reward_train)
+            reward_train = np.array(json.loads(stored_reward_train))
 
         stored_actions_train = r.get("actions_train")
         if stored_actions_train:
-            actions_train = json.loads(stored_actions_train)
+            actions_train = np.array(json.loads(stored_actions_train))
 
         stored_individual_values_train = r.get("individual_values")
         if stored_individual_values_train:
-            individual_values_train = json.loads(stored_individual_values_train)
+            individual_values_train = np.array(json.loads(stored_individual_values_train))
 
         stored_next_individual_values_train = r.get("next_individual_values_train")
         if stored_next_individual_values_train:
-            next_individual_values_train = json.loads(stored_next_individual_values_train)
+            next_individual_values_train = np.array(json.loads(stored_next_individual_values_train))
 
 
         new_data = r.get('data')
