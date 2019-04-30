@@ -15,6 +15,8 @@ def addNameToTensor(someTensor, theName):
     return tf.identity(someTensor, name=theName)
 
 def shuffle_in_unison(a, b, c, d, e, f):
+    if len(a) != len(b) or len(b) != len(c) or len(c) != len(d) or len(d) != len(e) or len(e) != len(f):
+        raise Exception('inconsistent data length')
     rng_state = np.random.get_state()
     np.random.shuffle(a)
 
