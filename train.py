@@ -16,6 +16,12 @@ def addNameToTensor(someTensor, theName):
 
 def shuffle_in_unison(a, b, c, d, e, f):
     if len(a) != len(b) or len(b) != len(c) or len(c) != len(d) or len(d) != len(e) or len(e) != len(f):
+        print(len(a))
+        print(len(b))
+        print(len(c))
+        print(len(d))
+        print(len(e))
+        print(len(f))
         raise Exception('inconsistent data length')
     rng_state = np.random.get_state()
     np.random.shuffle(a)
