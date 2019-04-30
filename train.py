@@ -226,35 +226,35 @@ with tf.Session() as sess:
 
 
 
-            if next_x_train:
+            if len(next_x_train) > 0:
                 next_x_train = np.concatenate([next_x_train, np.array(data['screens'])[1:]])
             else:
                 next_x_train = np.array(data['screens'])[1:]
 
-            if x_train:
+            if len(x_train) > 0:
                 x_train = np.concatenate([x_train, np.array(data['screens'][0:-1])])
             else:
                 x_train = np.array(data['screens'])[0:-1]
 
-            if reward_train:
+            if len(reward_train) > 0:
                 reward_train = np.concatenate(
                     [reward_train, np.expand_dims([data['scores'][-1] for _ in data['scores'][0:-1]], axis=1)])
             else:
                 reward_train = np.expand_dims([data['scores'][-1] for _ in data['scores'][0:-1]], axis=1)
 
-            if actions_train:
+            if len(actions_train) > 0:
                 actions_train = np.concatenate([actions_train, np.array((data['actions'])[0:-1])])
             else:
                 actions_train = np.array((data['actions'])[0:-1])
 
 
-            if individual_values_train:
+            if len(individual_values_train) > 0:
                 individual_values_train = np.concatenate([individual_values_train, np.array(data['individual_values'])[0:-1]])
             else:
                 individual_values_train = np.array(data['individual_values'])[0:-1]
 
 
-            if next_individual_values_train:
+            if len(next_individual_values_train) > 0:
                 next_individual_values_train = np.concatenate([next_individual_values_train, np.array(data['individual_values'])[1:]])
             else:
                 next_individual_values_train = np.array(data['individual_values'])[1:]
