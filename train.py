@@ -78,11 +78,7 @@ def forward_pass(x, single_value_inputs, keep_prob):
 
         layer_y_0 = build_layer(build_layer(tf.concat([nn1, nn2], axis=1), 10, keep_prob, dropout=False), 5, keep_prob, dropout=False)
 
-        y_0 = [build_layer(build_layer(layer_y_0, 5, keep_prob, dropout=False), 1, 1)]
-        for _ in range(4 - 1):
-            dense = build_layer(build_layer(layer_y_0, 5, keep_prob, dropout=False), 1, 1)
-            y_0 = tf.concat([y_0, [dense]], axis=2)
-
+        y_0 = tf.layers.dense(layer_y_0, 1, kernel_initializer=tf.random_uniform_initializer(-init_s, init_s))
 
 
         nn1 = tf.concat([tf.layers.flatten(x)], axis=1)
@@ -321,7 +317,7 @@ with tf.Session() as sess:
                     [action_pred],
                     feed_dict={food: x_train, individual_values: individual_values_train, keep_prob: 1.0})
 
-                print(action_pred_v)
+                #print(action_pred_v)
 
 
                 _, cost_train, weighted_action_loss_v = sess.run(
