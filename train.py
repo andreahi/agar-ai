@@ -98,7 +98,7 @@ def forward_pass(x, single_value_inputs, keep_prob):
             dense = layer_y_1
             for num_units in [10, 5]:
                 dense = build_layer(dense, num_units, keep_prob, dropout=False)
-            if y_1:
+            if y_1 != None:
                 y_1 = tf.concat([y_1, [dense]], axis=2)
             else:
                 y_1 = [dense]
