@@ -281,7 +281,7 @@ with tf.Session() as sess:
         shuffle_in_unison(next_x_train, next_individual_values_train, x_train, individual_values_train, reward_train, actions_train)
         print("dataset size: ", len(x_train))
 
-        step = 10000
+        step = 1000
 
         if step > len(x_train):
             continue
@@ -339,7 +339,7 @@ with tf.Session() as sess:
                     inputs={"input": food},
                     outputs={"action_pred": action_pred, "reward_pred": reward_pred})
         save_path = saver.save(sess, "model_tmp/model.ckpt")
-
+        r.flushall()
         #action_pred_v = sess.run(
         #    [action_pred],
         #    feed_dict={food: x_train, individual_values: individual_values_train, keep_prob: 1.0})
