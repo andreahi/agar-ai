@@ -78,10 +78,10 @@ def forward_pass(x, single_value_inputs, keep_prob):
 
         layer_y_0 = build_layer(build_layer(tf.concat([nn1, nn2], axis=1), 10, keep_prob, dropout=False), 5, keep_prob, dropout=False)
 
-        y_1 = [build_layer(build_layer(layer_y_0, 5, keep_prob, dropout=False), 1, 1)]
+        y_0 = [build_layer(build_layer(layer_y_0, 5, keep_prob, dropout=False), 1, 1)]
         for _ in range(4 - 1):
             dense = build_layer(build_layer(layer_y_0, 5, keep_prob, dropout=False), 1, 1)
-            y_1 = tf.concat([y_1, [dense]], axis=2)
+            y_0 = tf.concat([y_0, [dense]], axis=2)
 
 
 
