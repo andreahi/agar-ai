@@ -8,7 +8,7 @@ import redis
 import numpy as np
 from tensorflow.python.saved_model.simple_save import simple_save
 
-r = redis.Redis(host='localhost', port=6379, db=0)
+r = redis.Redis(host='in.space', port=6379, db=0)
 
 
 def addNameToTensor(someTensor, theName):
@@ -67,7 +67,7 @@ def forward_pass(x, single_value_inputs, keep_prob):
 
     with tf.variable_scope("model_weighted", reuse=tf.AUTO_REUSE):
         nn1 = tf.concat([tf.layers.flatten(x)], axis=1)
-        for num_units in [40, 20, 10, 5]:
+        for num_units in [400, 200, 100, 50, 5]:
             if num_units > 0:
                 nn1 = build_layer(nn1, num_units, keep_prob, dropout=False)
 
@@ -76,11 +76,12 @@ def forward_pass(x, single_value_inputs, keep_prob):
             if num_units > 0:
                 nn2 = build_layer(nn2, num_units, keep_prob, dropout=False)
 
-        y_0 = tf.layers.dense(build_layer(tf.concat([nn2], axis=1), 5, keep_prob, dropout=False), 1, kernel_initializer=tf.random_uniform_initializer(-init_s, init_s))
+        layer_y_0 = build_layer(build_layer(tf.concat([nn1, nn2], axis=1), 10, keep_prob, dropout=False), 5, keep_prob, dropout=False)
+        y_0 = tf.layers.dense(layer_y_0, 1, kernel_initializer=tf.random_uniform_initializer(-init_s, init_s))
 
 
         nn1 = tf.concat([tf.layers.flatten(x)], axis=1)
-        for num_units in [40, 20, 10, 5]:
+        for num_units in [400, 200, 100, 50, 5]:
             if num_units > 0:
                 nn1 = build_layer(nn1, num_units, keep_prob, dropout=False)
 
@@ -89,7 +90,8 @@ def forward_pass(x, single_value_inputs, keep_prob):
             if num_units > 0:
                 nn2 = build_layer(nn2, num_units, keep_prob, dropout=False)
 
-        y_1 = tf.layers.dense(build_layer(tf.concat([nn2], axis=1), 5, keep_prob, dropout=False), 4, kernel_initializer=tf.random_uniform_initializer(-init_s, init_s))
+        layer_y_1 = build_layer(build_layer(tf.concat([nn1, nn2], axis=1), 10, keep_prob, dropout=False), 5, keep_prob, dropout=False)
+        y_1 = tf.layers.dense(layer_y_1, 4, kernel_initializer=tf.random_uniform_initializer(-init_s, init_s))
 
 
 
@@ -153,7 +155,9 @@ with tf.Session() as sess:
     loss = tf.abs(action_pred - actions_target)
     print("shape loss: ", str(loss.get_shape()))
     expected_diff = tf.stop_gradient(tf.abs(reward_pred - next_pred_reward))
-    weighted_action_loss = tf.reduce_sum(tf.multiply(expected_diff, tf.multiply(actions_performed, loss)))
+    loss_action = tf.multiply(actions_performed, loss)
+    loss = tf.Print(loss_action, [loss_action])
+    weighted_action_loss = tf.reduce_sum(tf.multiply(expected_diff, loss_action))
     #weighted_loss = loss
 
     reward_loss = tf.reduce_sum(tf.abs(reward_pred - reward))
@@ -167,8 +171,8 @@ with tf.Session() as sess:
     optimizer_reward = tf.train.AdamOptimizer(0.0001)
 
     train_op = optimizer.minimize(loss)
-
     train_op_reward = optimizer_reward.minimize(reward_loss)
+
     init = tf.global_variables_initializer()
 
     saver = tf.train.Saver()
@@ -277,6 +281,11 @@ with tf.Session() as sess:
                 if i + step > len(x_train):
                     break
 
+                _, reward_loss_v = sess.run(
+                    [train_op_reward, reward_loss],
+                    feed_dict={food: x_train[i:i+step], individual_values:individual_values_train[i:i+step], reward: reward_train[i:i+step],
+                               keep_prob: 0.99})
+
                 y_pred_v = sess.run(
                     [reward_pred],
                     feed_dict={food: x_train[i:i+step], individual_values:individual_values_train[i:i+step], keep_prob: 1.0})[0]
@@ -294,11 +303,17 @@ with tf.Session() as sess:
                 actions_target_train[np.squeeze(positive_target)] = 1
                 actions_target_train[np.squeeze(negative_target)] = 0
 
-                _, reward_loss_v = sess.run(
-                    [train_op_reward, reward_loss],
-                    feed_dict={food: x_train[i:i+step], individual_values:individual_values_train[i:i+step], reward: reward_train[i:i+step], actions_performed: actions_train[i:i+step],
-                               actions_target: actions_target_train, next_pred_reward: next_y_pred_v,
-                               keep_prob: 0.99})
+                #print(y_pred_v)
+                #print(next_y_pred_v)
+                #print(actions_target_train)
+                #print(actions_train[i:i+step])
+
+                action_pred_v = sess.run(
+                    [action_pred],
+                    feed_dict={food: x_train, individual_values: individual_values_train, keep_prob: 1.0})
+
+                print(action_pred_v)
+
 
                 _, cost_train, weighted_action_loss_v = sess.run(
                     [train_op, cost, weighted_action_loss],
