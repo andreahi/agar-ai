@@ -101,7 +101,7 @@ def forward_pass(x, single_value_inputs, keep_prob):
             if y_1 != None:
                 y_1 = tf.concat([y_1, [build_layer(dense, 1, keep_prob, dropout=False)]], axis=2)
             else:
-                y_1 = [dense]
+                y_1 = [build_layer(dense, 1, keep_prob, dropout=False)]
 
 
     return addNameToTensor(y_0, "reward_pred"), addNameToTensor(y_1, "action_pred")
