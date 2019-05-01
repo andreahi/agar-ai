@@ -284,6 +284,7 @@ with tf.Session() as sess:
         step = 1000
 
         if step > len(x_train):
+            time.sleep(1)
             continue
         for _ in range(100):
             for i in range(0, 100000, step):
