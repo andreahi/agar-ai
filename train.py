@@ -77,7 +77,12 @@ def forward_pass(x, single_value_inputs, keep_prob):
                 nn2 = build_layer(nn2, num_units, keep_prob, dropout=False)
 
         layer_y_0 = build_layer(build_layer(tf.concat([nn1, nn2], axis=1), 10, keep_prob, dropout=False), 5, keep_prob, dropout=False)
-        y_0 = tf.layers.dense(layer_y_0, 1, kernel_initializer=tf.random_uniform_initializer(-init_s, init_s))
+
+        y_1 = [build_layer(build_layer(layer_y_0, 5, keep_prob, dropout=False), 1, 1)]
+        for _ in range(4 - 1):
+            dense = build_layer(build_layer(layer_y_0, 5, keep_prob, dropout=False), 1, 1)
+            y_1 = tf.concat([y_1, [dense]], axis=2)
+
 
 
         nn1 = tf.concat([tf.layers.flatten(x)], axis=1)
@@ -91,7 +96,11 @@ def forward_pass(x, single_value_inputs, keep_prob):
                 nn2 = build_layer(nn2, num_units, keep_prob, dropout=False)
 
         layer_y_1 = build_layer(build_layer(tf.concat([nn1, nn2], axis=1), 10, keep_prob, dropout=False), 5, keep_prob, dropout=False)
-        y_1 = tf.layers.dense(layer_y_1, 4, kernel_initializer=tf.random_uniform_initializer(-init_s, init_s))
+
+        y_1 = [build_layer(build_layer(layer_y_1, 5, keep_prob, dropout=False), 1, 1)]
+        for _ in range(4 - 1):
+            dense = build_layer(build_layer(layer_y_1, 5, keep_prob, dropout=False), 1, 1)
+            y_1 = tf.concat([y_1, [dense]], axis=2)
 
 
 
