@@ -165,7 +165,7 @@ with tf.Session() as sess:
     print("shape loss: ", str(loss.get_shape()))
     expected_diff = tf.stop_gradient(tf.abs(reward_pred - next_pred_reward))
     loss_action = tf.multiply(actions_performed, loss)
-    loss = tf.Print(loss_action, [loss_action])
+    #loss = tf.Print(loss_action, [loss_action])
     weighted_action_loss = tf.reduce_sum(tf.multiply(expected_diff, loss_action))
     #weighted_loss = loss
 
