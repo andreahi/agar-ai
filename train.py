@@ -67,7 +67,7 @@ def forward_pass(x, single_value_inputs, keep_prob):
 
     with tf.variable_scope("model_weighted", reuse=tf.AUTO_REUSE):
         nn1 = tf.concat([tf.layers.flatten(x)], axis=1)
-        for num_units in [400, 200, 100, 50, 5]:
+        for num_units in [40, 20, 10]:
             if num_units > 0:
                 nn1 = build_layer(nn1, num_units, keep_prob, dropout=False)
 
@@ -82,7 +82,7 @@ def forward_pass(x, single_value_inputs, keep_prob):
 
 
         nn1 = tf.concat([tf.layers.flatten(x)], axis=1)
-        for num_units in [400, 200, 100, 50, 5]:
+        for num_units in [40, 20, 10]:
             if num_units > 0:
                 nn1 = build_layer(nn1, num_units, keep_prob, dropout=False)
 
@@ -93,11 +93,15 @@ def forward_pass(x, single_value_inputs, keep_prob):
 
         layer_y_1 = build_layer(build_layer(tf.concat([nn1, nn2], axis=1), 10, keep_prob, dropout=False), 5, keep_prob, dropout=False)
 
-        y_1 = [build_layer(build_layer(layer_y_1, 5, keep_prob, dropout=False), 1, 1)]
-        for _ in range(4 - 1):
-            dense = build_layer(build_layer(layer_y_1, 5, keep_prob, dropout=False), 1, 1)
-            y_1 = tf.concat([y_1, [dense]], axis=2)
-
+        y_1 = None
+        for _ in range(4):
+            dense = layer_y_1
+            for num_units in [10, 5]:
+                dense = build_layer(dense, num_units, keep_prob, dropout=False)
+            if y_1:
+                y_1 = tf.concat([y_1, [dense]], axis=2)
+            else:
+                y_1 = [dense]
 
 
     return addNameToTensor(y_0, "reward_pred"), addNameToTensor(y_1, "action_pred")
