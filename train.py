@@ -290,7 +290,7 @@ with tf.Session() as sess:
         if step > len(x_train):
             time.sleep(1)
             continue
-        for _ in range(100):
+        for _ in range(1000):
             for i in range(0, 100000, step):
                 if i + step > len(x_train):
                     break
